@@ -1,0 +1,25 @@
+{
+  "name": "async-tesla-api",
+  "version": "0.0.1",
+  "description": "Async style api for tesla",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tesla-data/async-tesla-api.git"
+  },
+  "keywords": [
+    "tesla"
+  ],
+  "author": "Tal",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/tesla-data/async-tesla-api/issues"
+  },
+  "homepage": "https://github.com/tesla-data/async-tesla-api#readme",
+  "dependencies": {
+    "axios": "^0.19.2"
+  }
+}

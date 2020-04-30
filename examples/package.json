@@ -1,0 +1,6 @@
+{
+  "name": "examples",
+  "dependencies": {
+    "async-tesla-api": "file:../"
+  }
+}
