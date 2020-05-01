@@ -48,17 +48,21 @@ class Vehicle extends EventEmitter {
             this.emit('data:update', _.zipObject(['ts', ...fields.split(',')], data.value.split(',')));
             break;
           case 'data:error':
-            this.emit('data:error', data);
+            if (data.error_type === 'vehicle_disconnected') {
+              this.emit('data:disconnected');
+            } else {
+              this.emit('data:error', data);
+            }
             break;
         }
       });
     }
 
     await this._ws.send(JSON.stringify({
-      msg_type: 'data:subscribe',
-      token: Buffer.from(`${this._user.token.email}:${this.data.tokens[0]}`).toString('base64'),
-      // msg_type: 'data:subscribe_oauth',
-      // token: 'Bearer ' + this._user._token,
+      // msg_type: 'data:subscribe',
+      // token: Buffer.from(`${this._user.token.email}:${this.data.tokens[0]}`).toString('base64'),
+      msg_type: 'data:subscribe_oauth',
+      token: this._user.token.access_token,
       value: fields,
       tag: this.data.vehicle_id.toString()
     }));
