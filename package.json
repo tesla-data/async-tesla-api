@@ -20,6 +20,11 @@
   },
   "homepage": "https://github.com/tesla-data/async-tesla-api#readme",
   "dependencies": {
-    "axios": "^0.19.2"
+    "async-ws": "0.0.3",
+    "axios": "^0.19.2",
+    "lodash": "^4.17.15"
+  },
+  "devDependencies": {
+    "ws": "^7.2.5"
   }
 }
