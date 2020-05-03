@@ -15,7 +15,7 @@ class User {
   }
 
   async logout() {
-
+    return this.httpPost('/oauth/revoke', { token: this._token.access_token });
   }
 
   async listVehicles() {
