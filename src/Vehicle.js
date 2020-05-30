@@ -38,9 +38,27 @@ class Vehicle extends EventEmitter {
     return response;
   }
 
+  /* just for test  */
+  async wsConnect() {
+    this._wsConn = new WebSocket(
+      `wss://streaming.vn.teslamotors.com/connect/${this.data.vehicle_id}`,
+      {
+        autoReconnect: false,
+        options: {
+          headers: this._user.authorization
+        }
+      }
+    );
+
+    this._wsConn.on('message', async evt => {
+      const data = Buffer.isBuffer(evt) ? JSON.parse(evt.toString()) : await parseBlob(evt.data);
+      console.log(data);
+    });
+  }
+
   async startStreaming() {
     if (!this._ws) {
-      this._ws = new WebSocket('wss://streaming.vn.teslamotors.com/streaming/');
+      this._ws = new WebSocket('wss://streaming.vn.teslamotors.com/streaming/', { autoReconnect: false });
       this._ws.on('message', async evt => {
         const data = Buffer.isBuffer(evt) ? JSON.parse(evt.toString()) : await parseBlob(evt.data);
         switch (data.msg_type) {

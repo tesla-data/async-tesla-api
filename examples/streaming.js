@@ -13,6 +13,10 @@ const { User } = require('async-tesla-api');
       console.log('data:disconnected, re-fetch in 10 seconds...');
       setTimeout(() => v.startStreaming(), 10000);
     });
+
+    await v.wakeUp();
+    console.log('waked up');
+    await v.wsConnect();
     await v.startStreaming();
   }
 })();
