@@ -54,6 +54,8 @@ class Vehicle extends EventEmitter {
       const data = Buffer.isBuffer(evt) ? JSON.parse(evt.toString()) : await parseBlob(evt.data);
       console.log(data);
     });
+
+    await this._wsConn.ready();
   }
 
   async startStreaming() {
