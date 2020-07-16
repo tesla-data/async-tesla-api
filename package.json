@@ -1,6 +1,6 @@
 {
   "name": "async-tesla-api",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Async style api for tesla",
   "main": "index.js",
   "scripts": {
@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/tesla-data/async-tesla-api#readme",
   "dependencies": {
-    "async-ws": "^0.1.0",
+    "async-ws": "^0.1.1",
     "axios": "^0.19.2",
     "lodash": "^4.17.15"
   },
