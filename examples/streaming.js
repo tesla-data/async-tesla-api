@@ -9,7 +9,7 @@ const { User } = require('async-tesla-api');
 
     v.on('data:update', console.log);
     v.on('data:error', console.log);
-    v.on('close', () => console.log('Socket closed.'));
+    v.on('data:closed', () => console.log('Socket closed.'));
     v.on('data:disconnected', () => {
       console.log('data:disconnected, re-fetch in 100 seconds...');
       setTimeout(() => v.startStreaming(), 100000);

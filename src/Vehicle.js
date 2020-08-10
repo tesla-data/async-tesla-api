@@ -61,7 +61,7 @@ class Vehicle extends EventEmitter {
   async startStreaming() {
     if (!this._ws) {
       this._ws = new WebSocket('wss://streaming.vn.teslamotors.com/streaming/', { autoReconnect: false });
-      this._ws.on('close', () => this.emit('close'));
+      this._ws.on('close', () => this.emit('data:closed'));
       this._ws.on('message', async evt => {
         const data = Buffer.isBuffer(evt) ? JSON.parse(evt.toString()) : await parseBlob(evt.data);
         switch (data.msg_type) {
