@@ -33,7 +33,7 @@ class Vehicle extends EventEmitter {
     return response;
   }
 
-  async getStatus() {
+  async getState() {
     const { response } = await this._user.httpGet(`/api/1/vehicles/${this.data.id_s}/vehicle_data`);
     return response;
   }
@@ -87,6 +87,162 @@ class Vehicle extends EventEmitter {
       value: fields,
       tag: this.data.vehicle_id.toString()
     }));
+  }
+
+  /* homelink, speed limit, sunroof, media */
+
+  async honkHorn() {
+    const { response } = await this._user.httpPost(`/api/1/vehicles/${this.data.id_s}/command/honk_horn`);
+    return response;
+  }
+
+  async flashLights() {
+    const { response } = await this._user.httpPost(`/api/1/vehicles/${this.data.id_s}/command/flash_lights`);
+    return response;
+  }
+
+  async remoteStartDrive(password) {
+    const { response } = await this._user.httpPost(`/api/1/vehicles/${this.data.id_s}/command/remote_start_drive`, { password });
+    return response;
+  }
+
+  async triggerHomelink(lat, lon) {
+    const { response } = await this._user.httpPost(`/api/1/vehicles/${this.data.id_s}/command/trigger_homelink`, { lat, lon });
+    return response;
+  }
+
+  async setValetMode(on, pin) {
+    const { response } = await this._user.httpPost(`/api/1/vehicles/${this.data.id_s}/command/set_valet_mode`, { on, password: pin });
+    return response;
+  }
+
+  async resetValetPin() {
+    const { response } = await this._user.httpPost(`/api/1/vehicles/${this.data.id_s}/command/reset_valet_pin`);
+    return response;
+  }
+
+  async setSentryMode(on) {
+    const { response } = await this._user.httpPost(`/api/1/vehicles/${this.data.id_s}/command/set_sentry_mode`, { on });
+    return response;
+  }
+
+  async unlockDoor() {
+    const { response } = await this._user.httpPost(`/api/1/vehicles/${this.data.id_s}/command/door_unlock`);
+    return response;
+  }
+
+  async lockDoor() {
+    const { response } = await this._user.httpPost(`/api/1/vehicles/${this.data.id_s}/command/door_lock`);
+    return response;
+  }
+
+  async actuateTrunk() {
+    const { response } = await this._user.httpPost(`/api/1/vehicles/${this.data.id_s}/command/actuate_trunk`, { which_trunk: 'rear' });
+    return response;
+  }
+
+  async actuateFrunk() {
+    const { response } = await this._user.httpPost(`/api/1/vehicles/${this.data.id_s}/command/actuate_trunk`, { which_trunk: 'front' });
+    return response;
+  }
+
+  async ventWindows(lat = 0, lon = 0) {
+    const { response } = await this._user.httpPost(`/api/1/vehicles/${this.data.id_s}/command/window_control`, { command: 'vent', lat, lon });
+    return response;
+  }
+
+  async closeWindows(lat = 0, lon = 0) {
+    const { response } = await this._user.httpPost(`/api/1/vehicles/${this.data.id_s}/command/window_control`, { command: 'close', lat, lon });
+    return response;
+  }
+
+  async openChargePort() {
+    const { response } = await this._user.httpPost(`/api/1/vehicles/${this.data.id_s}/command/charge_port_door_open`);
+    return response;
+  }
+
+  async closeChargePort() {
+    const { response } = await this._user.httpPost(`/api/1/vehicles/${this.data.id_s}/command/charge_port_door_close`);
+    return response;
+  }
+
+  async startCharge() {
+    const { response } = await this._user.httpPost(`/api/1/vehicles/${this.data.id_s}/command/charge_start`);
+    return response;
+  }
+
+  async stopCharge() {
+    const { response } = await this._user.httpPost(`/api/1/vehicles/${this.data.id_s}/command/charge_stop`);
+    return response;
+  }
+
+  async setChargeStandard() {
+    const { response } = await this._user.httpPost(`/api/1/vehicles/${this.data.id_s}/command/charge_standard`);
+    return response;
+  }
+
+  async setChargeMaxRange() {
+    const { response } = await this._user.httpPost(`/api/1/vehicles/${this.data.id_s}/command/charge_max_range`);
+    return response;
+  }
+
+  async setChargeLimit(percent) {
+    const { response } = await this._user.httpPost(`/api/1/vehicles/${this.data.id_s}/command/set_charge_limit`, { percent });
+    return response;
+  }
+
+  async acStart() {
+    const { response } = await this._user.httpPost(`/api/1/vehicles/${this.data.id_s}/command/auto_conditioning_start`);
+    return response;
+  }
+
+  async acStop() {
+    const { response } = await this._user.httpPost(`/api/1/vehicles/${this.data.id_s}/command/auto_conditioning_stop`);
+    return response;
+  }
+
+  async setTemps(driver_temp, passenger_temp = driver_temp) {
+    const { response } = await this._user.httpPost(`/api/1/vehicles/${this.data.id_s}/command/set_temps`, { driver_temp, passenger_temp });
+    return response;
+  }
+
+  async setPreconditioningMax(on) {
+    const { response } = await this._user.httpPost(`/api/1/vehicles/${this.data.id_s}/command/set_preconditioning_max`, { on });
+    return response;
+  }
+
+  async remoteSeatHeaterRequest(heater, level) {
+    const { response } = await this._user.httpPost(`/api/1/vehicles/${this.data.id_s}/command/remote_seat_heater_request`, { heater, level });
+    return response;
+  }
+
+  async remoteSteeringWheelHeaterRequest(on) {
+    const { response } = await this._user.httpPost(`/api/1/vehicles/${this.data.id_s}/command/remote_steering_wheel_heater_request`, { on });
+    return response;
+  }
+
+  async share(locale = 'en-US', value) {
+    const { response } = await this._user.httpPost(
+      `/api/1/vehicles/${this.data.id_s}/command/share`,
+      {
+        type: 'share_ext_content_raw',
+        locale,
+        timestamp_ms: Date.now(),
+        value: {
+          'android.intent.extra.TEXT': value
+        }
+      });
+    return response;
+  }
+
+  async scheduleSoftwareUpdate(offset_sec = 0) {
+    const { response } = await this._user.httpPost(`/api/1/vehicles/${this.data.id_s}/command/schedule_software_update`, { offset_sec });
+    return response;
+  }
+
+  async cancelSoftwareUpdate() {
+    const { response } = await this._user.httpPost(`/api/1/vehicles/${this.data.id_s}/command/cancel_software_update`);
+    return response;
   }
 }
 

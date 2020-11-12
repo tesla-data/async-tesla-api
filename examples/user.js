@@ -11,6 +11,6 @@ const { User } = require('async-tesla-api');
     await v.wakeUp();
     console.log('Vehicle: ', v.data);
     console.log(await v.isMobileEnabled());
-    console.log(await v.getStatus());
+    console.log(await v.getState());
   }
 })();
