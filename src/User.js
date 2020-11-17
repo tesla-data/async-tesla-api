@@ -23,12 +23,12 @@ class User {
     return vehicles.map(v => new Vehicle(this, v));
   }
 
-  httpGet(path, cfg = {}) {
-    return get(path, { ...cfg, headers: { ...cfg.headers, ...this.authorization } });
+  httpGet(path, { headers, ...cfg } = {}) {
+    return get(path, { ...cfg, headers: { ...headers, ...this.authorization } });
   }
 
-  httpPost(path, body, cfg = {}) {
-    return post(path, body, { ...cfg, headers: { ...cfg.headers, ...this.authorization } });
+  httpPost(path, body, { headers, ...cfg } = {}) {
+    return post(path, body, { ...cfg, headers: { ...headers, ...this.authorization } });
   }
 }
 

@@ -34,7 +34,7 @@ class Vehicle extends EventEmitter {
   }
 
   async getState() {
-    const { response } = await this._user.httpGet(`/api/1/vehicles/${this.data.id_s}/vehicle_data`);
+    const { response } = await this._user.httpGet(`/api/1/vehicles/${this.data.id_s}/vehicle_data`, { retryWait: 3000 });
     return response;
   }
 
