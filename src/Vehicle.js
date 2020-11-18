@@ -33,6 +33,16 @@ class Vehicle extends EventEmitter {
     return response;
   }
 
+  async isOnline() {
+    const { state } = await this.getBasicInfo();
+    return state === 'online';
+  }
+
+  async getBasicInfo() {
+    const { response } = await this._user.httpGet(`/api/1/vehicles/${this.data.id_s}`);
+    return response;
+  }
+
   async getState() {
     const { response } = await this._user.httpGet(`/api/1/vehicles/${this.data.id_s}/vehicle_data`, { retryWait: 3000 });
     return response;
