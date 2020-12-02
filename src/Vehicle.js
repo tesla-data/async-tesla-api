@@ -227,7 +227,7 @@ class Vehicle extends EventEmitter {
       {
         type: 'share_ext_content_raw',
         locale,
-        timestamp_ms: Date.now(),
+        timestamp_ms: Math.round(Date.now() / 1000),
         value: {
           'android.intent.extra.TEXT': value
         }
