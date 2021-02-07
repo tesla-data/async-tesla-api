@@ -14,6 +14,12 @@ class User {
     return { Authorization: 'Bearer ' + this._token.access_token };
   }
 
+  async refreshToken() {
+    const { refreshToken } = require('./oauth');
+    this._token = await refreshToken(this._token.email, this._token.refresh_token);
+    return this._token;
+  }
+
   async logout() {
     return this.httpPost('/oauth/revoke', { token: this._token.access_token });
   }
