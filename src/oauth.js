@@ -1,10 +1,82 @@
+const url = require('url');
+const qs = require('querystring');
+const axios = require('axios');
+const crypto = require('crypto');
+const hash = require('hash-util');
+
 const { post } = require('./request');
 const User = require('./User');
 
 module.exports = {
-  async login(email, password, grant_type = 'password', client_secret = 'c7257eb71a564034f9419ee651c7d0e5f7aa6bfbd18bafb5c5c033b093bb2fa3', client_id = '81527cff06843c8634fdc09e8ac0abefb46ac849f38fe1e431c2ef2106796384') {
-  // async login(email, password, grant_type = 'password', client_secret = 'c75f14bbadc8bee3a7594412c31416f8300256d7668ea7e6e7f06727bfb9d220', client_id = 'e4a9949fcfa04068f59abb5a658f2bac0a3428e4652315490b659d5ab3f35a9e') {
-    const token = await post('/oauth/token', { password, email, grant_type, client_secret, client_id });
-    return new User({ email, ...token });
+  async login(email, password) {
+    const code_verifier = crypto.randomBytes(43).toString('hex');
+    const code_challenge = hash.sha256(code_verifier, 'base64');
+    console.log({ code_verifier, code_challenge });
+
+    const loginPage = await axios.get('https://auth.tesla.cn/oauth2/v3/authorize', {
+      params: {
+        client_id: 'ownerapi',
+        login_hint: email,
+        code_challenge,
+        code_challenge_method: 'S256',
+        redirect_uri: 'https://auth.tesla.com/void/callback',
+        response_type: 'code',
+        scope: 'openid email offline_access',
+        state: '200'
+      }
+    });
+
+    const cookies = loginPage.headers['set-cookie']
+      .map(c => /.+?=.*?;/ig.exec(c)[0])
+      .join(' ');
+    const { data: body } = loginPage;
+    const hiddenInputs =
+      [...body.matchAll(/<input type="hidden" name="(.+?)" value="(.*?)"/ig)]
+      .map(([, name, value]) => ({ name, value }));
+
+    const authorizeRes = await axios.post('https://auth.tesla.cn/oauth2/v3/authorize', qs.stringify({
+      ...hiddenInputs.reduce((m, { name, value }) => ({ ...m, [name]: value }), {}),
+      identity: email,
+      credential: password
+    }), {
+      maxRedirects: 0,
+      validateStatus: status => status === 302,
+      headers: {
+        cookie: cookies,
+        'content-type': 'application/x-www-form-urlencoded'
+      },
+      params: {
+        client_id: 'ownerapi',
+        login_hint: email,
+        code_challenge,
+        code_challenge_method: 'S256',
+        redirect_uri: 'https://auth.tesla.com/void/callback',
+        response_type: 'code',
+        scope: 'openid email offline_access',
+        state: '200'
+      }
+    });
+    const { headers: { location } } = authorizeRes;
+    const { code } = qs.parse(url.parse(location).query);
+
+    const { data: token } = await axios.post('https://auth.tesla.cn/oauth2/v3/token', {
+      grant_type: 'authorization_code',
+      client_id: 'ownerapi',
+      code,
+      code_verifier,
+      redirect_uri: 'https://auth.tesla.com/void/callback'
+    });
+
+    const { access_token, token_type, expires_in, created_at } = await post('/oauth/token', {
+      grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+      client_id: '81527cff06843c8634fdc09e8ac0abefb46ac849f38fe1e431c2ef2106796384',
+      client_secret: 'c7257eb71a564034f9419ee651c7d0e5f7aa6bfbd18bafb5c5c033b093bb2fa3'
+    }, {
+      headers: {
+        Authorization: 'Bearer ' + token.access_token
+      }
+    });
+
+    return new User({ email, ...token, access_token, token_type, expires_in, created_at });
   }
 };

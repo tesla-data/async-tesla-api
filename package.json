@@ -22,7 +22,8 @@
   "dependencies": {
     "async-ws": "^0.1.1",
     "axios": "^0.19.2",
-    "co-lodash": "^0.2.0"
+    "co-lodash": "^0.2.0",
+    "hash-util": "^0.1.0"
   },
   "devDependencies": {
     "ws": "^7.2.5"
